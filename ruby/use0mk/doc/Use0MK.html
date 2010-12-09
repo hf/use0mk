@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="Content-Type" content="text/html; charset=utf8" />
+<title>Module: Use0MK</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  relpath = '';
+  if (relpath != '') relpath += '/';
+</script>
+<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+  </head>
+  <body>
+    <script type="text/javascript" charset="utf-8">
+      if (window.top.frames.main) document.body.className = 'frames';
+    </script>
+    
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index (U)</a> &raquo; 
+    
+    
+    <span class="title">Use0MK</span>
+  
+  
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  <a id="class_list_link" href="#">Class List</a>
+  <a id="method_list_link" href="#">Method List</a>
+  <a id ="file_list_link" href="#">File List</a>
+</div>
+
+      <div class="clear"></div>
+    </div>
+    
+    <iframe id="search_frame"></iframe>
+    
+    <div id="content"><h1>Module: Use0MK
+  
+  
+  
+</h1>
+
+<dl class="box">
+  
+  
+    
+  
+    
+  
+  
+  
+    <dt class="r1 last">Defined in:</dt>
+    <dd class="r1 last">lib/use0mk.rb<span class="defines">,<br />
+  lib/use0mk.rb</span>
+</dd>
+  
+</dl>
+<div class="clear"></div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+   
+    
+   
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Use0MK/EmptyLinkError.html" title="Use0MK::EmptyLinkError (class)">EmptyLinkError</a></span>, <span class='object_link'><a href="Use0MK/Error.html" title="Use0MK::Error (class)">Error</a></span>, <span class='object_link'><a href="Use0MK/Interface.html" title="Use0MK::Interface (class)">Interface</a></span>, <span class='object_link'><a href="Use0MK/InvalidAPICall.html" title="Use0MK::InvalidAPICall (class)">InvalidAPICall</a></span>, <span class='object_link'><a href="Use0MK/InvalidAPIKey.html" title="Use0MK::InvalidAPIKey (class)">InvalidAPIKey</a></span>, <span class='object_link'><a href="Use0MK/InvalidCredentials.html" title="Use0MK::InvalidCredentials (class)">InvalidCredentials</a></span>, <span class='object_link'><a href="Use0MK/InvalidFormatError.html" title="Use0MK::InvalidFormatError (class)">InvalidFormatError</a></span>, <span class='object_link'><a href="Use0MK/InvalidLinkError.html" title="Use0MK::InvalidLinkError (class)">InvalidLinkError</a></span>, <span class='object_link'><a href="Use0MK/InvalidShortNameError.html" title="Use0MK::InvalidShortNameError (class)">InvalidShortNameError</a></span>, <span class='object_link'><a href="Use0MK/RedirectError.html" title="Use0MK::RedirectError (class)">RedirectError</a></span>, <span class='object_link'><a href="Use0MK/ShortenedURI.html" title="Use0MK::ShortenedURI (class)">ShortenedURI</a></span>
+    
+  
+</p>
+
+  <h2>Constant Summary</h2>
+  
+    <dl class="constants">
+      
+        <dt id="SHORTEN_URI-constant" class="">SHORTEN_URI =
+          
+        </dt>
+        <dd><pre class="code"><span class='string val'>&quot;http://api.0.mk/v2/skrati&quot;</span>
+</pre></dd>
+      
+        <dt id="PREVIEW_URI-constant" class="">PREVIEW_URI =
+          
+        </dt>
+        <dd><pre class="code"><span class='string val'>&quot;http://api.0.mk/v2/pregled&quot;</span>
+</pre></dd>
+      
+        <dt id="ORIGINS-constant" class="">ORIGINS =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrack token'>[</span><span class='symbol val'>:shorten</span><span class='comma token'>,</span> <span class='symbol val'>:preview</span><span class='rbrack token'>]</span>
+</pre></dd>
+      
+        <dt id="APIERRORS-constant" class="">APIERRORS =
+          
+        </dt>
+        <dd><pre class="code"><span class='lbrack token'>[</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='EmptyLinkError constant id'>EmptyLinkError</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidLinkError constant id'>InvalidLinkError</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidFormatError constant id'>InvalidFormatError</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidShortNameError constant id'>InvalidShortNameError</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidAPIKey constant id'>InvalidAPIKey</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidCredentials constant id'>InvalidCredentials</span><span class='comma token'>,</span>
+  <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='InvalidAPICall constant id'>InvalidAPICall</span>
+<span class='rbrack token'>]</span>
+</pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+</div>
+    
+    <div id="footer">
+  Generated on Thu Dec  9 17:39:20 2010 by 
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.6.3 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>

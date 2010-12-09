@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta name="Content-Type" content="text/html; charset=utf8" />
+<title>Documentation by YARD 0.6.3</title>
+<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  relpath = '';
+  if (relpath != '') relpath += '/';
+</script>
+<script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+  </head>
+  <body>
+    <script type="text/javascript" charset="utf-8">
+      if (window.top.frames.main) document.body.className = 'frames';
+    </script>
+    
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html" title="Index">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+  
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  <a id="class_list_link" href="#">Class List</a>
+  <a id="method_list_link" href="#">Method List</a>
+  <a id ="file_list_link" href="#">File List</a>
+</div>
+
+      <div class="clear"></div>
+    </div>
+    
+    <iframe id="search_frame"></iframe>
+    
+    <div id="content"><div id='filecontents'><h1>Use0MK</h1>
+<p>
+Use0MK is a Ruby interface for the <a href="http://0.mk" target="_parent" title="http://0.mk">http://0.mk</a> URL shortening service. It
+uses standard Ruby conventions in exposing 0.mk&#8217;s API and allows
+developers to more easily utilize 0.mk.
+</p>
+<h2>Installation</h2>
+<p>
+Use0MK requires the <tt>json</tt> gem in order to work properly.
+</p>
+<p>
+Use0MK as a gem is hosted on <a href="http://gemcutter.org" target="_parent" title="http://gemcutter.org">http://gemcutter.org</a>. After adding gemcutter
+to your gem sources, install it with:
+</p>
+<pre class="code">
+  <span class='gem identifier id'>gem</span> <span class='install identifier id'>install</span> <span class='use0mk identifier id'>use0mk</span>
+</pre>
+<h2>Examples</h2>
+<h3>Shortening a URL</h3>
+<pre class="code">
+  <span class='require identifier id'>require</span> <span class='string val'>&quot;use0mk&quot;</span>
+
+  <span class='comment val'># Pass your username as the first argument and your API key as</span>
+  <span class='comment val'># the second. You can safely use this without them.</span>
+  <span class='zeromk identifier id'>zeromk</span> <span class='assign token'>=</span> <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='Interface constant id'>Interface</span><span class='dot token'>.</span><span class='new identifier id'>new</span>
+
+  <span class='comment val'># It is probably a good idea to watch for exceptions when</span>
+  <span class='comment val'># calling any method on Use0MK::Interface or Use0MK::ShortenedURI</span>
+  <span class='comment val'># in order to check if something went wrong. Watch for the exceptions</span>
+  <span class='comment val'># thrown by URI.parse, Net::HTTP errors and the Use0MK errors.</span>
+  <span class='short identifier id'>short</span> <span class='assign token'>=</span> <span class='zeromk identifier id'>zeromk</span><span class='dot token'>.</span><span class='shorten identifier id'>shorten</span><span class='lparen token'>(</span><span class='string val'>&quot;http://google.com&quot;</span><span class='rparen token'>)</span>
+
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;Shortened #{short.title}[#{short.long_uri}] to #{short.short_uri},&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;with #{short.short_name}. Use #{short.delete_uri} with this&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;delete code #{short.delete_code} to delete this shortened URL.&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='string val'>&quot;You can view the stats on this shortened URL by following&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;#{short.stats_uri}, too.&quot;</span>
+
+  <span class='puts identifier id'>puts</span>
+
+  <span class='puts identifier id'>puts</span> <span class='string val'>&quot;Too late, now your shortened URL has been deleted.\n&quot;</span> <span class='if if_mod kw'>if</span> <span class='short identifier id'>short</span><span class='dot token'>.</span><span class='delete identifier id'>delete</span>
+</pre>
+<h3>Previewing a URL</h3>
+<pre class="code">
+  <span class='require identifier id'>require</span> <span class='string val'>&quot;use0mk&quot;</span>
+
+  <span class='zeromk identifier id'>zeromk</span> <span class='assign token'>=</span> <span class='Use0MK constant id'>Use0MK</span><span class='colon2 op'>::</span><span class='Interface constant id'>Interface</span><span class='dot token'>.</span><span class='new identifier id'>new</span> <span class='comment val'># username, API key</span>
+
+  <span class='comment val'># It's a good idea to watch for URI, Net::HTTP and Use0MK errors here.</span>
+  <span class='comment val'># Pass a hash of :uri, or :short_name to preview in order to have it</span>
+  <span class='comment val'># work out for you.</span>
+  <span class='preview identifier id'>preview</span> <span class='assign token'>=</span> <span class='zeromk identifier id'>zeromk</span><span class='dot token'>.</span><span class='preview identifier id'>preview</span> <span class='symbol val'>:uri</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;http://0.mk/use0mkrb&quot;</span>
+
+  <span class='deletable identifier id'>deletable</span> <span class='assign token'>=</span> <span class='preview identifier id'>preview</span><span class='dot token'>.</span><span class='delete identifier id'>delete</span>
+
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;The #{preview.short_uri} links to #{preview.long_uri}.&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;Too bad, tho, it was created by #{preview.origin}ing a&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;given URL/shortname. Now you #{deletable ? 'can' : 'cannot'}&quot;</span>
+  <span class='puts identifier id'>puts</span> <span class='dstring node'>&quot;delete the short URL. #{deletable ? ':)' : ':(' }&quot;</span>
+
+  <span class='puts identifier id'>puts</span>
+</pre>
+<h2>Copyright</h2>
+<p>
+Use0MK is Copyright © 2010 Stojan Dimitrovski. Refer to the LICENSE file
+included in this distribution for more information on the copyrights.
+</p>
+</div></div>
+    
+    <div id="footer">
+  Generated on Thu Dec  9 17:39:19 2010 by 
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.6.3 (ruby-1.8.7).
+</div>
+
+  </body>
+</html>
