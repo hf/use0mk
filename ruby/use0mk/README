@@ -1,0 +1,64 @@
+
+= Use0MK
+
+Use0MK is a Ruby interface for the {http://0.mk} URL shortening service. It uses standard Ruby conventions in exposing 0.mk's API and allows developers to more easily utilize 0.mk.
+
+== Installation
+
+Use0MK requires the +json+ gem in order to work properly.
+
+Use0MK as a gem is hosted on {http://gemcutter.org}. After adding gemcutter to your gem sources, install it with:
+
+  gem install use0mk
+
+== Examples
+
+=== Shortening a URL
+
+  require "use0mk"
+
+  # Pass your username as the first argument and your API key as
+  # the second. You can safely use this without them.
+  zeromk = Use0MK::Interface.new
+
+  # It is probably a good idea to watch for exceptions when
+  # calling any method on Use0MK::Interface or Use0MK::ShortenedURI
+  # in order to check if something went wrong. Watch for the exceptions
+  # thrown by URI.parse, Net::HTTP errors and the Use0MK errors.
+  short = zeromk.shorten("http://google.com")
+
+  puts "Shortened #{short.title}[#{short.long_uri}] to #{short.short_uri},"
+  puts "with #{short.short_name}. Use #{short.delete_uri} with this"
+  puts "delete code #{short.delete_code} to delete this shortened URL."
+  puts "You can view the stats on this shortened URL by following"
+  puts "#{short.stats_uri}, too."
+
+  puts
+
+  puts "Too late, now your shortened URL has been deleted.\n" if short.delete
+
+
+=== Previewing a URL
+
+  require "use0mk"
+
+  zeromk = Use0MK::Interface.new # username, API key
+
+  # It's a good idea to watch for URI, Net::HTTP and Use0MK errors here.
+  # Pass a hash of :uri, or :short_name to preview in order to have it
+  # work out for you.
+  preview = zeromk.preview :uri => "http://0.mk/use0mk.rb"
+
+  deletable = preview.delete
+
+  puts "The #{preview.short_uri} links to #{preview.long_uri}."
+  puts "Too bad, tho, it was created by #{preview.origin}ing a"
+  puts "given URL/shortname. Now you #{deletable ? 'can' : 'cannot'}"
+  puts "delete the short URL. #{deletable ? ':)' : ':(' }"
+
+  puts
+
+== Copyright
+
+Use0MK is Copyright © 2010 Stojan Dimitrovski. Refer to the LICENSE file included in this distribution for more information on the copyrights.
+

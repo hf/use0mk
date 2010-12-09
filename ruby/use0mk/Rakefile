@@ -1,0 +1,11 @@
+require "rubygems"
+require "echoe"
+
+Echoe.new("use0mk") do |g|
+  g.author = "Stojan Dimitrovski"
+  g.email = "s.dimitrovski@gmail.com"
+  g.summary = "Ruby interface for the 0.mk URL shortening service."
+  g.url = "http://github.com/hf/use0mk"
+  g.runtime_dependencies = ["json"]
+end
+
