@@ -47,7 +47,7 @@ Use0MK as a gem is hosted on {http://gemcutter.org}. After adding gemcutter to y
   # It's a good idea to watch for URI, Net::HTTP and Use0MK errors here.
   # Pass a hash of :uri, or :short_name to preview in order to have it
   # work out for you.
-  preview = zeromk.preview :uri => "http://0.mk/use0mk.rb"
+  preview = zeromk.preview :uri => "http://0.mk/use0mkrb"
 
   deletable = preview.delete
 
