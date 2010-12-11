@@ -22,7 +22,6 @@
 require "rubygems"
 require "net/http"
 require "json"
-require "cgi"
 
 module Use0MK
   SHORTEN_URI = "http://api.0.mk/v2/skrati"
@@ -340,6 +339,7 @@ class Use0MK::Interface
   # Shortens all non-0.mk shortened URIs in text.
   #
   # @param [String] text The text with the URIs to shorten
+  # @param [Boolean] lenient Don't shorten erroneous URIs in text (ignore exceptions)
   # @return [Array<String, Array<Use0MK::ShortenedURI>>] the +first+ position in this
   #   array contains the text with all of the non-0.mk URIs shortened,
   #   and the +last+ position contains an +Array+ of {Use0MK::ShortenedURI} --
@@ -348,7 +348,7 @@ class Use0MK::Interface
   # @raise [URI::Error]
   # @raise [Net::HTTPException]
   # @raise [Use0MK::Error]
-  def shorten_text(text)
+  def shorten_text(text, lenient = false)
     txt = text.dup
     links = txt.scan Use0MK::TEXT_URL_SCAN
     uris = []
@@ -356,9 +356,13 @@ class Use0MK::Interface
     links.each do |link|
       uri = link.first
       if !(uri =~ Use0MK::ZERO_MK)
-        short = self.shorten(uri)
-        txt.gsub! uri, short.short_uri
-        uris << short
+        begin
+          short = self.shorten(uri)
+          txt.gsub! uri, short.short_uri
+          uris << short
+        rescue Exception => e
+          raise e if !lenient
+        end
       end
     end
 
