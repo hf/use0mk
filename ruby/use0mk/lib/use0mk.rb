@@ -29,7 +29,7 @@ module Use0MK
   PREVIEW_URI = "http://api.0.mk/v2/pregled"
   ORIGINS = [:shorten, :preview]
 
-  ZERO_MK = /https?:\/\/(www.)?0\.mk(\/[\w\d\-]*)?/i # includes 0.mk too
+  ZERO_MK = /https?:\/\/(www\.)?0\.mk(\/[\w\d\-]*)?/i # includes 0.mk too
   TEXT_URL_SCAN = /(https?:\/\/[\w\d\-\.]+(\/[\S]+)?)/i
 
   # ERRORS defined below
