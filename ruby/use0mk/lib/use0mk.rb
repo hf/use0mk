@@ -22,11 +22,15 @@
 require "rubygems"
 require "net/http"
 require "json"
+require "cgi"
 
 module Use0MK
   SHORTEN_URI = "http://api.0.mk/v2/skrati"
   PREVIEW_URI = "http://api.0.mk/v2/pregled"
   ORIGINS = [:shorten, :preview]
+
+  ZERO_MK = /https?:\/\/(www.)?0\.mk\/[\w\d\-]+/i
+  TEXT_URL_SCAN = /(https?:\/\/[\w\d\-\.]+(\/[\S]+)?)/i
 
   # ERRORS defined below
 end
@@ -241,6 +245,8 @@ class Use0MK::Interface
 
   # Deletes a shortened URI from 0.mk.
   #
+  # @note This method needs no +username+ or +apikey+ and thus it is a class method.
+  #
   # @param [String] delete_uri the 0.mk URI to delete
   # @param [String] delete_code the 0.mk delete code associated with the
   #   0.mk URI
@@ -248,13 +254,13 @@ class Use0MK::Interface
   # @raise [ArgumentError]
   # @raise [URI::Error]
   def self.delete(delete_uri, delete_code)
-    if !delete_uri.nil? and delete_uri.to_s.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+    if !delete_uri.nil? and delete_uri.to_s.strip =~ Use0MK::ZERO_MK
       delete_uri = URI.parse(delete_uri.to_s.strip)
     else
       raise ArgumentError, "Delete URI must be a valid http://0.mk delete URI."
     end
 
-    if !delete_code.nil? and delete_code.to_s.strip =~ /[\w\d]+/
+    if !delete_code.nil? and delete_code.to_s.strip =~ /[\w\d\-]+/
       delete_code = delete_code.to_s.strip
     else
       raise ArgumentError, "Delete code must be an alphanumeric string."
@@ -299,13 +305,12 @@ class Use0MK::Interface
   #   If using a +Hash+ to pass the parameters, +:short_name+ and +:uri+
   #   are the key symbols, of which +:short_name+ has predecence over +:uri+.
   #   @param [Hash<Symbol, String>] link +:short_name+ or +:uri+ keys with String values
-  #   @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
   # @overload preview(link)
   #   If using a +String+ to pass the parameters, then you can either pass a
   #   valid (+http://0.mk/short_name+) URI or just the +short_name+.
   #   @param [String] link just the short name or the whole 0.mk URI
-  #   @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
   #
+  # @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
   # @raise [ArgumentError]
   # @raise [URI::Error]
   # @raise [Net::HTTPException]
@@ -316,13 +321,13 @@ class Use0MK::Interface
     if link.is_a? Hash
       if !link[:short_name].nil?
         uri = "http://0.mk/#{link[:short_name].to_s.strip}"
-      elsif !link[:uri].nil? and link[:uri].to_s.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+      elsif !link[:uri].nil? and link[:uri].to_s.strip =~ Use0MK::ZERO_MK
         uri = link[:uri].to_s.strip
       end
     elsif link.is_a? String
-      if link.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+      if link.strip =~ Use0MK::ZERO_MK
         uri = link.strip
-      elsif link.strip =~ /[\w\d]+/
+      elsif link.strip =~ /[\w\d\-]+/
         uri = "http://0.mk/#{link.strip}"
       end
     end
@@ -330,6 +335,34 @@ class Use0MK::Interface
     raise ArgumentError, "link needs to be either a String containing the 0.mk URI, or the shortname, or a Hash with :short_name or :uri keys pointing to a valid 0.mk shortened URI" if uri.nil?
 
     _preview(uri)
+  end
+
+  # Shortens all non-0.mk shortened URIs in text.
+  #
+  # @param [String] text The text with the URIs to shorten
+  # @return [Array<String, Array<Use0MK::ShortenedURI>>] the +first+ position in this
+  #   array contains the text with all of the non-0.mk URIs shortened,
+  #   and the +last+ position contains an +Array+ of {Use0MK::ShortenedURI} --
+  #   the substituted and shortened URIs from the original input text.
+  #
+  # @raise [URI::Error]
+  # @raise [Net::HTTPException]
+  # @raise [Use0MK::Error]
+  def shorten_text(text)
+    txt = text.dup
+    links = txt.scan Use0MK::TEXT_URL_SCAN
+    uris = []
+
+    links.each do |link|
+      uri = link.first
+      if !(uri =~ Use0MK::ZERO_MK)
+        short = self.shorten(uri)
+        txt.gsub! uri, short.short_uri
+        uris << short
+      end
+    end
+
+    return [txt, uris]
   end
 
   private
