@@ -172,9 +172,14 @@ class Use0MK::ShortenedURI
   # the deletion code
   # @return [String, nil]
   attr_reader :delete_code
-  # whether this URI is deleted
+  # whether this URI has been deleted
   # @return [true, false]
   attr_reader :deleted
+  # whether this object has enough information to delete the shortened
+  # URI programatically
+  # @return [true, false]
+  attr_reader :deletable
+
 
   # Initializes this class. Usually called from either +shorten+ or +preview+.
   #
@@ -187,8 +192,6 @@ class Use0MK::ShortenedURI
     end
 
     @origin = origin
-    @deleted = @origin != :shorten
-
     @long_uri = attributes[:long_uri]
     @short_uri = attributes[:short_uri]
     @short_name = attributes[:short_name]
@@ -196,6 +199,10 @@ class Use0MK::ShortenedURI
     @title = attributes[:title]
     @delete_uri = attributes[:delete_uri]
     @delete_code = attributes[:delete_code]
+
+    @deletable = (@origin == :shorten) or !(@delete_uri.nil? and delete_uri.nil?)
+
+    @deleted = false
   end
 
   # Deletes the shortened URI.
@@ -208,6 +215,8 @@ class Use0MK::ShortenedURI
     end
 
     @deleted = Use0MK::Interface.delete(@delete_uri, @delete_code)
+    @deletable = false
+    return @deleted
   end
 end
 
@@ -223,22 +232,33 @@ class Use0MK::Interface
 
   # Initializes the {Use0MK::Interface}.
   #
-  # @param [String] username 0.mk username
-  # @param [String] apikey 0.mk API key
+  # @param [String, nil] username 0.mk username
+  # @param [String, nil] apikey 0.mk API key
   def initialize(username = nil, apikey = nil)
     @username = username
     @apikey = apikey
   end
 
   # Deletes a shortened URI from 0.mk.
-  # This method does not raise or handles any exceptions. It also does not
-  # handle redirection.
   #
   # @param [String] delete_uri the 0.mk URI to delete
-  # @param [String] delete_code the 0.mk delete code associated with the 0.mk URI
+  # @param [String] delete_code the 0.mk delete code associated with the
+  #   0.mk URI
   # @return [true, false] wheter the delete succeeded
+  # @raise [ArgumentError]
+  # @raise [URI::Error]
   def self.delete(delete_uri, delete_code)
-    delete_uri = URI.parse(delete_uri)
+    if !delete_uri.nil? and delete_uri.to_s.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+      delete_uri = URI.parse(delete_uri.to_s.strip)
+    else
+      raise ArgumentError, "Delete URI must be a valid http://0.mk delete URI."
+    end
+
+    if !delete_code.nil? and delete_code.to_s.strip =~ /[\w\d]+/
+      delete_code = delete_code.to_s.strip
+    else
+      raise ArgumentError, "Delete code must be an alphanumeric string."
+    end
 
     response = Net::HTTP.post_form(delete_uri,
       {'brisiKod' => delete_code})
@@ -251,45 +271,63 @@ class Use0MK::Interface
     return false
   end
 
-  # Shortens a URI.
-  # This method can raise several exceptions of which most importantly:
-  # * {URI::Error}
-  # * {Net::HTTPException}
-  # * {Use0MK::Error}
-  #
-  # It is a wise thing to watch for any of those exceptions.
+  # Shortens a long URI that is not +http://0.mk/short_name+.
   #
   # @param [String] uri the _long_ URI to shorten
   # @param [String] short_name a custom short name to use when shortening the long URI (+http://0.mk/short_name+)
   # @return [Use0MK::ShortenedURI] the shortened URI
+  # @raise [URI::Error]
+  # @raise [Net::HTTPException]
+  # @raise [Use0MK::Error]
   def shorten(uri, short_name = nil)
-    uri = URI.parse(uri)
+    uri = URI.parse(uri.to_s.strip)
 
     _shorten(uri, short_name)
   end
 
   # Inspects an already shortened URI.
-  # This method can raise several exceptions of which most importantly:
-  # * {URI::Error}
-  # * {Net::HTTPException}
-  # * {Use0MK::Error}
   #
-  # It is a wise idea to watch for any of these.
+  # @example Use a Hash
+  #   iface.preview :short_name => "use0mkrb"
+  #   iface.preview :uri => "http://0.mk/use0mkrb" # same as above
   #
-  # @param [Hash] link provide +:short_name+ to inspect only the short name of an URI, or +:uri+ to inspect a whole +http://0.mk/short_name+ URI
-  # @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
-  def preview(link = {:short_name => nil, :uri => nil})
+  # @example Use a String
+  #   iface.preview "http://0.mk/use0mkrb"
+  #   iface.preview "use0mkrb" # same as above
+  #
+  # @overload preview(link)
+  #   If using a +Hash+ to pass the parameters, +:short_name+ and +:uri+
+  #   are the key symbols, of which +:short_name+ has predecence over +:uri+.
+  #   @param [Hash<Symbol, String>] link +:short_name+ or +:uri+ keys with String values
+  #   @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
+  # @overload preview(link)
+  #   If using a +String+ to pass the parameters, then you can either pass a
+  #   valid (+http://0.mk/short_name+) URI or just the +short_name+.
+  #   @param [String] link just the short name or the whole 0.mk URI
+  #   @return [Use0MK::ShortenedURI] the shortened URI (volume of data varies)
+  #
+  # @raise [ArgumentError]
+  # @raise [URI::Error]
+  # @raise [Net::HTTPException]
+  # @raise [Use0MK::Error]
+  def preview(link = nil)
     uri = nil
 
-    if !link[:short_name].nil? and !link[:short_name].empty?
-      uri = "http://0.mk/#{link[:short_name]}"
-    elsif !link[:uri].nil? and !link[:uri].empty?
-      uri = link[:uri] if (link[:uri] =~ /http:\/\/0\.mk\/.*/)
+    if link.is_a? Hash
+      if !link[:short_name].nil?
+        uri = "http://0.mk/#{link[:short_name].to_s.strip}"
+      elsif !link[:uri].nil? and link[:uri].to_s.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+        uri = link[:uri].to_s.strip
+      end
+    elsif link.is_a? String
+      if link.strip =~ /http:\/\/0\.mk\/[\w\d]+/
+        uri = link.strip
+      elsif link.strip =~ /[\w\d]+/
+        uri = "http://0.mk/#{link.strip}"
+      end
     end
 
-    if uri.nil?
-      raise ArgumentError, ':uri should be a valid http://0.mk shortened URI.'
-    end
+    raise ArgumentError, "link needs to be either a String containing the 0.mk URI, or the shortname, or a Hash with :short_name or :uri keys pointing to a valid 0.mk shortened URI" if uri.nil?
 
     _preview(uri)
   end
@@ -309,6 +347,8 @@ class Use0MK::Interface
 
   def _generate_uri(link, short_name = nil, apicall = Use0MK::SHORTEN_URI)
     uri = URI.parse(apicall)
+
+    short_name = short_name.to_s.strip if !short_name.nil?
 
     query = {
       :korisnik => @username,
@@ -367,16 +407,16 @@ class Use0MK::Interface
   end
 
   def _shorten(uri, short_name)
-    request_uri = _generate_uri(uri, short_name)
+    request_uri = _generate_uri(uri.to_s.strip, short_name)
 
-    response = _fetch(request_uri, uri)
+    response = _fetch(request_uri, uri.to_s.strip)
     body = JSON.parse(response.body)
 
     _parse(:shorten, body)
   end
 
   def _preview(uri)
-    request_uri = _generate_uri(uri, nil, Use0MK::PREVIEW_URI)
+    request_uri = _generate_uri(uri.to_s.strip, nil, Use0MK::PREVIEW_URI)
 
     response = _fetch(request_uri, uri)
     body = JSON.parse(response.body)

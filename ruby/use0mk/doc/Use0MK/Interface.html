@@ -223,7 +223,7 @@ Initializes the <span class='object_link'><a href="" title="Use0MK::Interface (c
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#preview-instance_method" title="#preview (instance method)">- (Use0MK::ShortenedURI) <strong>preview</strong>(link = {:short_name =&gt; nil, :uri =&gt; nil}) </a>
+      <a href="#preview-instance_method" title="#preview (instance method)">- (Object) <strong>preview</strong>(link = nil) </a>
     
 
     
@@ -261,7 +261,7 @@ Inspects an already shortened URI.
 
   
     <span class="summary_desc"><div class='inline'><p>
-Shortens a URI.
+Shortens a long URI that is not <tt>http://0.mk/short_name</tt>.
 </p>
 </div></span>
   
@@ -296,7 +296,7 @@ Initializes the <span class='object_link'><a href="" title="Use0MK::Interface (c
   
     <li>
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
       
       
         <span class='name'>username</span>
@@ -315,7 +315,7 @@ Initializes the <span class='object_link'><a href="" title="Use0MK::Interface (c
   
     <li>
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
       
       
         <span class='name'>apikey</span>
@@ -340,13 +340,13 @@ Initializes the <span class='object_link'><a href="" title="Use0MK::Interface (c
       <pre class="lines">
 
 
-228
-229
-230
-231</pre>
+237
+238
+239
+240</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 228</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 237</span>
 
 <span class='def def kw'>def</span> <span class='initialize identifier id'>initialize</span><span class='lparen token'>(</span><span class='username identifier id'>username</span> <span class='assign token'>=</span> <span class='nil nil kw'>nil</span><span class='comma token'>,</span> <span class='apikey identifier id'>apikey</span> <span class='assign token'>=</span> <span class='nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='@username ivar id'>@username</span> <span class='assign token'>=</span> <span class='username identifier id'>username</span>
@@ -403,12 +403,12 @@ the API key for 0.mk
       <pre class="lines">
 
 
-222
-223
-224</pre>
+231
+232
+233</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 231</span>
 
 <span class='def def kw'>def</span> <span class='apikey identifier id'>apikey</span>
   <span class='@apikey ivar id'>@apikey</span>
@@ -459,12 +459,12 @@ the username associated with 0.mk
       <pre class="lines">
 
 
-219
-220
-221</pre>
+228
+229
+230</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 219</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 228</span>
 
 <span class='def def kw'>def</span> <span class='username identifier id'>username</span>
   <span class='@username ivar id'>@username</span>
@@ -492,8 +492,7 @@ the username associated with 0.mk
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Deletes a shortened URI from 0.mk. This method does not raise or handles
-any exceptions. It also does not handle redirection.
+Deletes a shortened URI from 0.mk.
 </p>
 
 
@@ -557,6 +556,28 @@ wheter the delete succeeded
     </li>
   
 </ul>
+<h3>Raises:</h3>
+<ul class="raise">
+  
+    <li>
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt>URI::Error</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -564,25 +585,45 @@ wheter the delete succeeded
       <pre class="lines">
 
 
-240
-241
-242
-243
-244
-245
-246
-247
-248
-249
 250
 251
-252</pre>
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 240</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 250</span>
 
 <span class='def def kw'>def</span> <span class='self self kw'>self</span><span class='dot token'>.</span><span class='delete identifier id'>delete</span><span class='lparen token'>(</span><span class='delete_uri identifier id'>delete_uri</span><span class='comma token'>,</span> <span class='delete_code identifier id'>delete_code</span><span class='rparen token'>)</span>
-  <span class='delete_uri identifier id'>delete_uri</span> <span class='assign token'>=</span> <span class='URI constant id'>URI</span><span class='dot token'>.</span><span class='parse identifier id'>parse</span><span class='lparen token'>(</span><span class='delete_uri identifier id'>delete_uri</span><span class='rparen token'>)</span>
+  <span class='if if kw'>if</span> <span class='notop op'>!</span><span class='delete_uri identifier id'>delete_uri</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span> <span class='and and kw'>and</span> <span class='delete_uri identifier id'>delete_uri</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span> <span class='match op'>=~</span> <span class='regexp val'>/http:\/\/0\.mk\/[\w\d]+/</span>
+    <span class='delete_uri identifier id'>delete_uri</span> <span class='assign token'>=</span> <span class='URI constant id'>URI</span><span class='dot token'>.</span><span class='parse identifier id'>parse</span><span class='lparen token'>(</span><span class='delete_uri identifier id'>delete_uri</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span><span class='rparen token'>)</span>
+  <span class='else else kw'>else</span>
+    <span class='raise identifier id'>raise</span> <span class='ArgumentError constant id'>ArgumentError</span><span class='comma token'>,</span> <span class='string val'>&quot;Delete URI must be a valid http://0.mk delete URI.&quot;</span>
+  <span class='end end kw'>end</span>
+
+  <span class='if if kw'>if</span> <span class='notop op'>!</span><span class='delete_code identifier id'>delete_code</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span> <span class='and and kw'>and</span> <span class='delete_code identifier id'>delete_code</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span> <span class='match op'>=~</span> <span class='regexp val'>/[\w\d]+/</span>
+    <span class='delete_code identifier id'>delete_code</span> <span class='assign token'>=</span> <span class='delete_code identifier id'>delete_code</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span>
+  <span class='else else kw'>else</span>
+    <span class='raise identifier id'>raise</span> <span class='ArgumentError constant id'>ArgumentError</span><span class='comma token'>,</span> <span class='string val'>&quot;Delete code must be an alphanumeric string.&quot;</span>
+  <span class='end end kw'>end</span>
 
   <span class='response identifier id'>response</span> <span class='assign token'>=</span> <span class='Net constant id'>Net</span><span class='colon2 op'>::</span><span class='HTTP constant id'>HTTP</span><span class='dot token'>.</span><span class='post_form identifier id'>post_form</span><span class='lparen token'>(</span><span class='delete_uri identifier id'>delete_uri</span><span class='comma token'>,</span>
     <span class='lbrace token'>{</span><span class='string val'>'brisiKod'</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='delete_code identifier id'>delete_code</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
@@ -609,29 +650,57 @@ wheter the delete succeeded
       <div class="method_details first">
   <p class="signature first" id="preview-instance_method">
   
-    - (<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>) <strong>preview</strong>(link = {:short_name =&gt; nil, :uri =&gt; nil}) 
+    
+      <span class="overload">- (<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>) <strong>preview</strong>(link) </span>
+    
+      <span class="overload">- (<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>) <strong>preview</strong>(link) </span>
+    
   
 
   
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Inspects an already shortened URI. This method can raise several exceptions
-of which most importantly:
+Inspects an already shortened URI.
 </p>
-<ul>
-<li>URI::Error
 
-</li>
-<li>Net::HTTPException
 
-</li>
-<li><span class='object_link'><a href="Error.html" title="Use0MK::Error (class)">Error</a></span>
+  </div>
+</div>
+<div class="tags">
+  
+  <div class="examples">
+    <h3>Examples:</h3>
+    
+      <h4><div class='inline'><p>
+Use a Hash
+</p>
+</div></h4>
+      <pre class="example code"><span class='iface identifier id'>iface</span><span class='dot token'>.</span><span class='preview identifier id'>preview</span> <span class='symbol val'>:short_name</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;use0mkrb&quot;</span>
+<span class='iface identifier id'>iface</span><span class='dot token'>.</span><span class='preview identifier id'>preview</span> <span class='symbol val'>:uri</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='string val'>&quot;http://0.mk/use0mkrb&quot;</span> <span class='comment val'># same as above</span>
+</pre>
+    
+      <h4><div class='inline'><p>
+Use a String
+</p>
+</div></h4>
+      <pre class="example code"><span class='iface identifier id'>iface</span><span class='dot token'>.</span><span class='preview identifier id'>preview</span> <span class='string val'>&quot;http://0.mk/use0mkrb&quot;</span>
+<span class='iface identifier id'>iface</span><span class='dot token'>.</span><span class='preview identifier id'>preview</span> <span class='string val'>&quot;use0mkrb&quot;</span> <span class='comment val'># same as above</span>
+</pre>
+    
+  </div>
 
-</li>
-</ul>
-<p>
-It is a wise idea to watch for any of these.
+  <h3>Overloads:</h3>
+  <ul class="overload">
+    
+      
+      <li class="overload_item">
+        <span class="signature">- (<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>) <strong>preview</strong>(link) </span>
+        <div class="docstring">
+  <div class="discussion">
+    <p>
+If using a <tt>Hash</tt> to pass the parameters, <tt>:short_name</tt> and <tt>:uri</tt>
+are the key symbols, of which <tt>:short_name</tt> has predecence over <tt>:uri</tt>.
 </p>
 
 
@@ -643,19 +712,16 @@ It is a wise idea to watch for any of these.
   
     <li>
       
-        <span class='type'>(<tt>Hash</tt>)</span>
+        <span class='type'>(<tt>Hash&lt;Symbol, String&gt;</tt>)</span>
       
       
         <span class='name'>link</span>
       
       
-        <em class="default">(defaults to: <tt>{:short_name =&gt; nil, :uri =&gt; nil}</tt>)</em>
-      
       
         &mdash;
         <div class='inline'><p>
-provide <tt>:short_name</tt> to inspect only the short name of an URI, or <tt>:uri</tt>
-to inspect a whole <tt>http://0.mk/short_name</tt> URI
+<tt>:short_name</tt> or <tt>:uri</tt> keys with String values
 </p>
 </div>
       
@@ -682,43 +748,158 @@ the shortened URI (volume of data varies)
   
 </ul>
 
+</div>
+      </li>
+    
+      
+      <li class="overload_item">
+        <span class="signature">- (<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>) <strong>preview</strong>(link) </span>
+        <div class="docstring">
+  <div class="discussion">
+    <p>
+If using a <tt>String</tt> to pass the parameters, then you can either pass
+a valid (<tt>http://0.mk/short_name</tt>) URI or just the <tt>short_name</tt>.
+</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <h3>Parameters:</h3>
+<ul class="param">
+  
+    <li>
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <span class='name'>link</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+just the short name or the whole 0.mk URI
+</p>
+</div>
+      
+    </li>
+  
+</ul>
+<h3>Returns:</h3>
+<ul class="return">
+  
+    <li>
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ShortenedURI.html" title="Use0MK::ShortenedURI (class)">Use0MK::ShortenedURI</a></span></tt>)</span>
+      
+      
+      
+      
+        &mdash;
+        <div class='inline'><p>
+the shortened URI (volume of data varies)
+</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div>
+      </li>
+    
+  </ul>
+<h3>Raises:</h3>
+<ul class="raise">
+  
+    <li>
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt>URI::Error</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt>Net::HTTPException</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Error.html" title="Use0MK::Error (class)">Use0MK::Error</a></span></tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+</ul>
+
 </div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291
-292
-293
-294
-295</pre>
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 281</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 313</span>
 
-<span class='def def kw'>def</span> <span class='preview identifier id'>preview</span><span class='lparen token'>(</span><span class='link identifier id'>link</span> <span class='assign token'>=</span> <span class='lbrace token'>{</span><span class='symbol val'>:short_name</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='nil nil kw'>nil</span><span class='comma token'>,</span> <span class='symbol val'>:uri</span> <span class='assign token'>=</span><span class='gt op'>&gt;</span> <span class='nil nil kw'>nil</span><span class='rbrace token'>}</span><span class='rparen token'>)</span>
+<span class='def def kw'>def</span> <span class='preview identifier id'>preview</span><span class='lparen token'>(</span><span class='link identifier id'>link</span> <span class='assign token'>=</span> <span class='nil nil kw'>nil</span><span class='rparen token'>)</span>
   <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='nil nil kw'>nil</span>
 
-  <span class='if if kw'>if</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:short_name</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span> <span class='and and kw'>and</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:short_name</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='empty? fid id'>empty?</span>
-    <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;http://0.mk/#{link[:short_name]}&quot;</span>
-  <span class='elsif elsif kw'>elsif</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span> <span class='and and kw'>and</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='empty? fid id'>empty?</span>
-    <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span> <span class='if if_mod kw'>if</span> <span class='lparen token'>(</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span> <span class='match op'>=~</span> <span class='regexp val'>/http:\/\/0\.mk\/.*/</span><span class='rparen token'>)</span>
+  <span class='if if kw'>if</span> <span class='link identifier id'>link</span><span class='dot token'>.</span><span class='is_a? fid id'>is_a?</span> <span class='Hash constant id'>Hash</span>
+    <span class='if if kw'>if</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:short_name</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span>
+      <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;http://0.mk/#{link[:short_name].to_s.strip}&quot;</span>
+    <span class='elsif elsif kw'>elsif</span> <span class='notop op'>!</span><span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span> <span class='and and kw'>and</span> <span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span> <span class='match op'>=~</span> <span class='regexp val'>/http:\/\/0\.mk\/[\w\d]+/</span>
+      <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='link identifier id'>link</span><span class='lbrack token'>[</span><span class='symbol val'>:uri</span><span class='rbrack token'>]</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span>
+    <span class='end end kw'>end</span>
+  <span class='elsif elsif kw'>elsif</span> <span class='link identifier id'>link</span><span class='dot token'>.</span><span class='is_a? fid id'>is_a?</span> <span class='String constant id'>String</span>
+    <span class='if if kw'>if</span> <span class='link identifier id'>link</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span> <span class='match op'>=~</span> <span class='regexp val'>/http:\/\/0\.mk\/[\w\d]+/</span>
+      <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='link identifier id'>link</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span>
+    <span class='elsif elsif kw'>elsif</span> <span class='link identifier id'>link</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span> <span class='match op'>=~</span> <span class='regexp val'>/[\w\d]+/</span>
+      <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='dstring node'>&quot;http://0.mk/#{link.strip}&quot;</span>
+    <span class='end end kw'>end</span>
   <span class='end end kw'>end</span>
 
-  <span class='if if kw'>if</span> <span class='uri identifier id'>uri</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span>
-    <span class='raise identifier id'>raise</span> <span class='ArgumentError constant id'>ArgumentError</span><span class='comma token'>,</span> <span class='string val'>':uri should be a valid http://0.mk shortened URI.'</span>
-  <span class='end end kw'>end</span>
+  <span class='raise identifier id'>raise</span> <span class='ArgumentError constant id'>ArgumentError</span><span class='comma token'>,</span> <span class='string val'>&quot;link needs to be either a String containing the 0.mk URI, or the shortname, or a Hash with :short_name or :uri keys pointing to a valid 0.mk shortened URI&quot;</span> <span class='if if_mod kw'>if</span> <span class='uri identifier id'>uri</span><span class='dot token'>.</span><span class='nil? fid id'>nil?</span>
 
   <span class='_preview identifier id'>_preview</span><span class='lparen token'>(</span><span class='uri identifier id'>uri</span><span class='rparen token'>)</span>
 <span class='end end kw'>end</span>
@@ -738,22 +919,7 @@ the shortened URI (volume of data varies)
 </p><div class="docstring">
   <div class="discussion">
     <p>
-Shortens a URI. This method can raise several exceptions of which most
-importantly:
-</p>
-<ul>
-<li>URI::Error
-
-</li>
-<li>Net::HTTPException
-
-</li>
-<li><span class='object_link'><a href="Error.html" title="Use0MK::Error (class)">Error</a></span>
-
-</li>
-</ul>
-<p>
-It is a wise thing to watch for any of those exceptions.
+Shortens a long URI that is not <tt>http://0.mk/short_name</tt>.
 </p>
 
 
@@ -820,6 +986,37 @@ the shortened URI
     </li>
   
 </ul>
+<h3>Raises:</h3>
+<ul class="raise">
+  
+    <li>
+      
+        <span class='type'>(<tt>URI::Error</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt>Net::HTTPException</tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Error.html" title="Use0MK::Error (class)">Use0MK::Error</a></span></tt>)</span>
+      
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -827,17 +1024,17 @@ the shortened URI
       <pre class="lines">
 
 
-265
-266
-267
-268
-269</pre>
+282
+283
+284
+285
+286</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 265</span>
+      <pre class="code"><span class="info file"># File 'lib/use0mk.rb', line 282</span>
 
 <span class='def def kw'>def</span> <span class='shorten identifier id'>shorten</span><span class='lparen token'>(</span><span class='uri identifier id'>uri</span><span class='comma token'>,</span> <span class='short_name identifier id'>short_name</span> <span class='assign token'>=</span> <span class='nil nil kw'>nil</span><span class='rparen token'>)</span>
-  <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='URI constant id'>URI</span><span class='dot token'>.</span><span class='parse identifier id'>parse</span><span class='lparen token'>(</span><span class='uri identifier id'>uri</span><span class='rparen token'>)</span>
+  <span class='uri identifier id'>uri</span> <span class='assign token'>=</span> <span class='URI constant id'>URI</span><span class='dot token'>.</span><span class='parse identifier id'>parse</span><span class='lparen token'>(</span><span class='uri identifier id'>uri</span><span class='dot token'>.</span><span class='to_s identifier id'>to_s</span><span class='dot token'>.</span><span class='strip identifier id'>strip</span><span class='rparen token'>)</span>
 
   <span class='_shorten identifier id'>_shorten</span><span class='lparen token'>(</span><span class='uri identifier id'>uri</span><span class='comma token'>,</span> <span class='short_name identifier id'>short_name</span><span class='rparen token'>)</span>
 <span class='end end kw'>end</span>
@@ -852,7 +1049,7 @@ the shortened URI
 </div>
     
     <div id="footer">
-  Generated on Thu Dec  9 17:39:19 2010 by 
+  Generated on Sat Dec 11 14:06:20 2010 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.6.3 (ruby-1.8.7).
 </div>
