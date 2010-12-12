@@ -19,17 +19,17 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 #
-require "rubygems"
 require "net/http"
 require "json"
 
 module Use0MK
+  USER_AGENT = "Use0MK " + RUBY_DESCRIPTION
   SHORTEN_URI = "http://api.0.mk/v2/skrati"
   PREVIEW_URI = "http://api.0.mk/v2/pregled"
   ORIGINS = [:shorten, :preview]
 
   ZERO_MK = /https?:\/\/(www\.)?0\.mk(\/[\w\d\-]*)?/i # includes 0.mk too
-  TEXT_URL_SCAN = /(https?:\/\/[\w\d\-\.]+(\/[\S]+)?)/i
+  TEXT_URL_SCAN = /(https?:\/\/[\w\d\-\.]+(\/[\S]*)?)/i
 
   # ERRORS defined below
 end
@@ -402,7 +402,10 @@ class Use0MK::Interface
   def _fetch(uri, link, redirect = 5)
     raise Use0MK::RedirectError, "Redirect level too deep (max 5)." if redirect <= 0
 
-    response = Net::HTTP.get_response(uri)
+    response = Net::HTTP.get_response(uri) do |request|
+      request["User-Agent"] = Use0MK::USER_AGENT
+    end
+
     case response
       when Net::HTTPSuccess then return response
       when Net::HTTPRedirection then _fetch(response['location'], redirect - 1)
@@ -414,7 +417,7 @@ class Use0MK::Interface
 
   def _parse(origin, json)
     if json['status'] != 1
-      raise Use0MK::APIERRORS[json['greskaId'].to_i - 1], json['greskaMsg'].to_s.strip
+      raise Use0MK::APIERRORS[json['greskaId'] - 1], json['greskaMsg'].to_s.strip
     end
 
     assign = {
